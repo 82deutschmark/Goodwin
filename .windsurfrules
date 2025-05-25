@@ -1,0 +1,3 @@
+We are using Windows 10 for development.
+We are using Vercel for deployment.
+We prefer to use gpt-4.1-nano-2025-04-14 for the model when possible, for image generation we use gpt-image-1
