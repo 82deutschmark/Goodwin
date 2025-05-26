@@ -83,10 +83,19 @@ const authOptions: NextAuthOptions = {
       } as AdapterUser;
     },
   },
+  debug: process.env.NODE_ENV === 'development',
   providers: [
     GoogleProvider({
       clientId: googleClientId,
       clientSecret: googleClientSecret,
+      authorization: {
+        params: {
+          prompt: 'select_account',
+          access_type: 'offline',
+          response_type: 'code',
+          redirect_uri: process.env.GOOGLE_REDIRECT_URI || 'https://gptpluspro.com/api/auth/callback/google'
+        }
+      }
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
