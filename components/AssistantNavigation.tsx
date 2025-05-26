@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Image as ImageIcon, Wrench, MessageSquare, CreditCard } from 'lucide-react';
 import CreditBalanceDisplay from './CreditBalanceDisplay';
+import { AuthButton } from './AuthButton';
 
 export function AssistantNavigation() {
   const pathname = usePathname();
@@ -76,18 +77,21 @@ export function AssistantNavigation() {
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             <div className="flex items-center space-x-4">
-              <CreditBalanceDisplay />
-              <Link 
-                href="/buy-credits"
-                className={`inline-flex items-center px-3 py-1 rounded-md text-sm font-medium ${
-                  isActive('/buy-credits') 
-                    ? 'bg-blue-100 text-blue-700' 
-                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-                }`}
-              >
-                <CreditCard className="mr-1 h-4 w-4" />
-                Buy Credits
-              </Link>
+              <div className="flex items-center space-x-2">
+                <CreditBalanceDisplay />
+                <Link 
+                  href="/buy-credits"
+                  className={`inline-flex items-center px-3 py-1 rounded-md text-sm font-medium ${
+                    isActive('/buy-credits') 
+                      ? 'bg-blue-100 text-blue-700' 
+                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                  }`}
+                >
+                  <CreditCard className="mr-1 h-4 w-4" />
+                  Buy Credits
+                </Link>
+                <AuthButton />
+              </div>
             </div>
           </div>
           

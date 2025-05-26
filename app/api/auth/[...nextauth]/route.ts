@@ -109,6 +109,18 @@ const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  // Server-side event logging for OAuth debugging (Gemini 2.5 Pro, 2025-05-26)
+  // Server-side event logging for OAuth debugging (Gemini 2.5 Pro, 2025-05-26)
+  events: {
+    // Logs sign-in attempts for debugging
+    async signIn(message: any) {
+      console.log('[NextAuth][Event][signIn]', message);
+    },
+    // Logs user creation for debugging
+    async createUser(message: any) {
+      console.log('[NextAuth][Event][createUser]', message);
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);

@@ -1,4 +1,4 @@
-# Authentication Strategy for gptpluspro.com
+# Authentication Strategy for gptpluspro.com   
 
 This document outlines a robust strategy for implementing user authentication, focusing on server-side checks and Next.js middleware for scalability, security, and an enhanced user experience. This approach is preferred over purely client-side conditional rendering for protecting application access.
 
