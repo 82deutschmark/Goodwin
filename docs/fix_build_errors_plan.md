@@ -1,50 +1,54 @@
 # Fix Build Errors Plan
 
-**Date:** 2025-05-25
-**Author:** Cascade (gpt-4.1-nano-2025-04-14)
+**Date:** 2025-05-25  
+**Author:** Cascade (Claude 3.5 Sonnet)
 
-## Objective
-Resolve all build errors and lint warnings blocking deployment for the OpenAI Responses Starter App. Ensure all code is robust, maintainable, and compliant with project conventions and best practices for a non-technical user.
+## Critical Build Error Identified
 
----
+The application deployment on Vercel is failing with the following error:
+```
+Error [PrismaClientInitializationError]: Prisma has detected that this project was built on Vercel, which caches dependencies. This leads to an outdated Prisma Client because Prisma's auto-generation isn't triggered. To fix this, make sure to run the `prisma generate` command during the build process.
+```
 
-## Checklist of Tasks
+## Primary Fix: Add Prisma Generate to Build Process
 
-- [ ] Fix all incorrect imports from `@/lib/prisma` to use named export (`prisma`), not default.
-- [ ] Refactor `openai` package usage in `imageGenerationService.ts` and related files to use `OpenAI` class (no `Configuration` or `OpenAIApi`).
-- [ ] Remove all unused variables flagged by ESLint in all affected files.
-- [ ] Fix React hook dependency array warnings in all affected components.
-- [ ] Escape all unescaped single quotes in JSX (per lint rules).
-- [ ] Update module-level comments in all modified files with author/model and explanations.
-- [ ] Summarize all changes in the changelog with timestamp and author/model.
-- [ ] Propose a build/test after changes.
+The main issue is that Prisma Client is not being generated during the Vercel build process. This happens because Vercel caches dependencies, and the Prisma Client is not getting properly regenerated with the correct database schema.
+
+### Solution Steps:
+
+1. **Update package.json build script:**
+   - [ ] Modify the build script to include Prisma generate command before Next.js build
+   - [ ] Update the script to: `"build": "prisma generate && next build"`
+
+2. **Verify Prisma client usage:**
+   - [ ] Ensure consistent import syntax across all files: `import { prisma } from "@/lib/prisma"`
+   - [ ] Avoid default imports from prisma
+
+3. **Test locally:**
+   - [ ] Run the updated build command locally to verify it works
+   - [ ] Confirm the Prisma client is properly generated
+
+## Additional Optimizations
+
+- [ ] Consider adding a `postinstall` script to automatically run `prisma generate` after `npm install`
+- [ ] Ensure all database connections are properly closed in serverless functions
+- [ ] Implement connection pooling best practices for serverless environments
+- [ ] Update documentation to note the Prisma generate requirement for deployment
 
 ## Files to Modify
-- `app/api/credits/consume/route.ts`
-- `app/api/user/credits/route.ts`
-- `lib/services/imageGenerationService.ts`
-- `app/api/image-generator/route.ts`
-- `app/api/auth/[...nextauth]/route.ts`
-- `app/api/stripe/webhook/route.ts`
-- `app/buy-credits/page.tsx`
-- `components/CreditBalanceDisplay.tsx`
-- `components/CreditHistoryDisplay.tsx`
-- `components/MechanicAssistant.tsx`
-- `lib/services/creditService.ts`
-- `lib/services/goodwinService.ts`
-- `lib/services/mechanicService.ts`
-- `docs/changelog.md` (append summary)
 
-## Files to Create
-- None (unless documentation gaps are discovered)
+- [ ] `package.json` - Update build script
+- [ ] `README.md` - Update deployment instructions
+- [ ] `docs/CHANGELOG.md` - Document the build fix
 
-## Notes
-- All changes must be modular and clearly commented for maintainability.
-- No code should be shown to the user directly.
-- All updates must be appended to the changelog with the current timestamp and author/model.
-- If any errors are encountered during the process, pause and consult the user for further input.
+## Next Steps After Fix
+
+1. Deploy to Vercel with the updated build script
+2. Monitor the build logs to confirm successful Prisma generation
+3. Test all database-dependent features in production
+4. Document the solution in the project wiki/documentation
 
 ---
 
 ## Status
-*Plan created and saved. Proceeding with file modifications and lint/build fixes.*
+*Plan created. Proceeding with implementing the Prisma build fix and documentation updates.*
