@@ -16,14 +16,22 @@
  * Usage: Maintainers should review Stripe product/price IDs in .env and keep logic in sync with credit packages.
  */
 
-import { NextApiRequest, NextApiResponse } from 'next';
-import { buffer } from 'micro';
+import { NextResponse } from 'next/server';
+import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { prisma } from '@/lib/prisma';
 
-// Use latest Stripe API version for type compatibility (fixes: a37a8220-d3ee-4140-97c9-1cdfc2eda924)
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06-20' });
+// This is needed to get the raw body for Stripe webhook verification
+export const dynamic = 'force-dynamic'; // Ensure this route is dynamic
+
+// Initialize Stripe with the latest API version
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { 
+  apiVersion: '2024-06-20' 
+});
+
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+
+// Stripe initialization and webhook secret are already defined above
 
 // Credit package mapping (sync with .env and docs)
 const CREDIT_PACKAGES: Record<string, { credits: number; bonus: number; total: number; productId: string; priceId: string; amount: number }> = {
@@ -35,74 +43,91 @@ const CREDIT_PACKAGES: Record<string, { credits: number; bonus: number; total: n
   [process.env.STRIPE_PRICE_ID_140000!]: { credits: 100000, bonus: 40000, total: 140000, productId: process.env.STRIPE_PRODUCT_ID_140000!, priceId: process.env.STRIPE_PRICE_ID_140000!, amount: 10000 },
 };
 
-export const config = {
-  api: {
-    bodyParser: false, // Stripe requires the raw body for signature verification
-  },
-};
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).end('Method Not Allowed');
+// Helper to get raw body as buffer
+async function getRawBody(readable: any) {
+  const chunks = [];
+  for await (const chunk of readable) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
   }
+  return Buffer.concat(chunks);
+}
+
+export async function POST(request: Request) {
+  // Get the raw body as text
+  const body = await request.text();
+  const headersList = await headers();
+  const signature = headersList.get('stripe-signature');
+  
+  if (!signature) {
+    return new NextResponse('No signature', { status: 400 });
+  }
+
   let event;
+  
   try {
-    const buf = await buffer(req);
-    const sig = req.headers['stripe-signature'] as string;
-    event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
+    // Verify the webhook signature
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err: any) {
     console.error('⚠️  Webhook signature verification failed:', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    return new NextResponse(
+      JSON.stringify({ 
+        error: err instanceof Error ? err.message : 'Unknown error' 
+      }), 
+      { 
+        status: 400, 
+        headers: { 'Content-Type': 'application/json' } 
+      }
+    );
   }
 
-  // Handle events
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        // Defensive: ensure customerEmail is string or undefined (lint 0b98c3c1-8da5-4bf4-8e4a-dcc44ac7b24e)
+        // Handle checkout session completed
         const customerEmail = typeof session.customer_details?.email === 'string' ? session.customer_details.email : undefined;
         const paymentIntentId = typeof session.payment_intent === 'string' ? session.payment_intent : undefined;
-        // No use of display_items (not in API, fixes lint 427aa74d-fea0-4f08-823b-0258814b0221)
+        
         // Find the purchased price ID
         let purchasedPriceId: string | undefined = undefined;
         if (session.metadata && typeof session.metadata.price_id === 'string') {
           purchasedPriceId = session.metadata.price_id;
-        } else if (
-          session.mode === 'payment' &&
-          typeof session.amount_total === 'number' &&
-          typeof session.currency === 'string'
-        ) {
+        } else if (session.mode === 'payment' && typeof session.amount_total === 'number') {
           // Try to map by amount
           purchasedPriceId = Object.keys(CREDIT_PACKAGES).find(
             (pid) => CREDIT_PACKAGES[pid].amount === session.amount_total! / 100
           );
         }
+        
         if (!purchasedPriceId || !CREDIT_PACKAGES[purchasedPriceId]) {
           console.error('Unknown or missing price ID for credit package purchase.');
           break;
         }
+        
         // Idempotency: check if already processed
         if (!paymentIntentId) {
           console.error('Missing paymentIntentId in session');
           break;
         }
+        
         const existing = await prisma.creditPurchase.findUnique({ where: { stripePaymentIntentId: paymentIntentId } });
         if (existing) {
           console.log('Credit purchase already processed for paymentIntent:', paymentIntentId);
           break;
         }
+        
         // Find user by email
         if (!customerEmail) {
           console.error('Missing customer email in session');
           break;
         }
+        
         const user = await prisma.user.findUnique({ where: { email: customerEmail } });
         if (!user) {
           console.error('User not found for Stripe customer email:', customerEmail);
           break;
         }
+        
         // Award credits
         const { total } = CREDIT_PACKAGES[purchasedPriceId];
         await prisma.$transaction([
@@ -111,7 +136,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               userId: user.id,
               stripePaymentIntentId: paymentIntentId,
               creditsPurchased: total,
-              amountPaid: typeof session.amount_total === 'number' ? session.amount_total : 0, // fixes lint 729257de-fb87-4e0a-89e7-0bd86e4d6005
+              amountPaid: typeof session.amount_total === 'number' ? session.amount_total : 0,
               currency: typeof session.currency === 'string' ? session.currency : 'usd',
             },
           }),
@@ -120,24 +145,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             data: { credits: { increment: total } },
           }),
         ]);
+        
         console.log(`Awarded ${total} credits to user ${user.email} for paymentIntent ${paymentIntentId}`);
         break;
       }
       case 'charge.refunded': {
         const charge = event.data.object as Stripe.Charge;
         const paymentIntentId = charge.payment_intent as string;
+        
         // Find the purchase record
-        const purchase = await prisma.creditPurchase.findUnique({ where: { stripePaymentIntentId: paymentIntentId } });
+        const purchase = await prisma.creditPurchase.findUnique({ 
+          where: { stripePaymentIntentId: paymentIntentId } 
+        });
+        
         if (!purchase) {
           console.error('No matching CreditPurchase for refund:', paymentIntentId);
           break;
         }
+        
         // Find user
-        const user = await prisma.user.findUnique({ where: { id: purchase.userId } });
+        const user = await prisma.user.findUnique({ 
+          where: { id: purchase.userId } 
+        });
+        
         if (!user) {
           console.error('User not found for refund:', purchase.userId);
           break;
         }
+        
         // Decrement credits and log adjustment
         await prisma.$transaction([
           prisma.creditAdjustment.create({
@@ -152,15 +187,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             data: { credits: { decrement: purchase.creditsPurchased } },
           }),
         ]);
+        
         console.log(`Refunded ${purchase.creditsPurchased} credits from user ${user.email} for paymentIntent ${paymentIntentId}`);
         break;
       }
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
-    res.status(200).json({ received: true });
-  } catch (err: any) {
-    console.error('Webhook handler error:', err);
-    res.status(500).send('Internal server error');
+
+    return new NextResponse(JSON.stringify({ received: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (err) {
+    console.error('Webhook error:', err);
+    return new NextResponse(
+      JSON.stringify({ 
+        error: err instanceof Error ? err.message : 'Unknown error' 
+      }), 
+      { 
+        status: 500, 
+        headers: { 'Content-Type': 'application/json' } 
+      }
+    );
   }
 }
