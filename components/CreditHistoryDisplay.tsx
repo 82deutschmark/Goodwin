@@ -1,12 +1,14 @@
 /**
  * Credit History Display Component
- * 
+ *
  * This component displays a user's credit transaction history, including
  * purchases, consumption, and adjustments. It provides a clear view of
  * how credits are being used throughout the application.
- * 
- * Author: Cascade (Claude 3.5 Sonnet)
- * Date: 2025-05-25
+ *
+ * Author: Cascade (gpt-4.1-nano-2025-04-14)
+ * Last updated: 2025-05-25
+ *
+ * Notes: Fixed React Hook dependency warnings and removed unused variable. Lint-free.
  */
 
 "use client";
@@ -65,7 +67,7 @@ export function CreditHistoryDisplay({
     if (session?.user?.id) {
       fetchHistory();
     }
-  }, [session?.user?.id, limit]);
+  }, [session?.user?.id, limit, fetchHistory]);
 
   if (!session?.user?.id) {
     return null;
@@ -76,7 +78,7 @@ export function CreditHistoryDisplay({
     try {
       const date = new Date(dateString);
       return formatDistanceToNow(date, { addSuffix: true });
-    } catch (e) {
+    } catch {
       return 'Unknown date';
     }
   };

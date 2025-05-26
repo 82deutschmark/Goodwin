@@ -1,18 +1,20 @@
 /**
  * Mr. Goodwin Service - Central Butler/Orchestrator
- * 
+ *
  * This service acts as the central orchestrator for all user interactions.
  * Users only ever interact with Mr. Goodwin, who then routes requests to
  * the appropriate specialized servants behind the scenes.
- * 
+ *
  * Mr. Goodwin handles:
  * - Request classification and routing
  * - Credit management (invisible to user)
  * - Context management via vector stores
  * - Presenting unified responses back to the user
- * 
- * Author: Cascade (Claude 3.5 Sonnet)
- * Date: 2025-05-25
+ *
+ * Author: Cascade (gpt-4.1-nano-2025-04-14)
+ * Last updated: 2025-05-25
+ *
+ * Notes: Removed unused variables flagged by ESLint. Lint-free.
  */
 
 import OpenAI from 'openai';
@@ -76,7 +78,7 @@ export class GoodwinService {
       
       // 4. Route the request to the appropriate servant
       let response: string;
-      let additionalCost = 0;
+      // Removed unused variable: additionalCost
       
       switch (servantType) {
         case ServantType.GEARHART:
@@ -93,7 +95,7 @@ export class GoodwinService {
           // Route to Mr. Brightwell (artist)
           // For now, just a placeholder until properly implemented
           response = "I'll prepare that image for you right away, sir.";
-          additionalCost = MCP_COSTS.IMAGE_GENERATION.BASE_COST;
+          // Removed unused variable: additionalCost
           break;
           
         // Add cases for other servants as they're implemented
@@ -102,7 +104,7 @@ export class GoodwinService {
         default:
           // Handle directly by Goodwin
           response = await this.generateGoodwinResponse(request);
-          additionalCost = 0; // Already accounted for in base cost
+          // Already accounted for in base cost
           break;
       }
       

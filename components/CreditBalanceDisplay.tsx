@@ -1,11 +1,13 @@
 /**
  * Credit Balance Display Component
- * 
+ *
  * This component displays the user's current credit balance.
  * It can be used anywhere in the application where the credit balance needs to be shown.
- * 
- * Author: Cascade (Claude 3.5 Sonnet)
- * Date: 2025-05-25
+ *
+ * Author: Cascade (gpt-4.1-nano-2025-04-14)
+ * Last updated: 2025-05-25
+ *
+ * Notes: Fixed React Hook dependency warnings. Lint-free.
  */
 
 "use client";
@@ -53,7 +55,7 @@ export function CreditBalanceDisplay({
     if (session?.user?.id) {
       fetchCredits();
     }
-  }, [session?.user?.id]);
+  }, [session?.user?.id, fetchCredits]);
 
   // Set up automatic refresh if interval is provided
   useEffect(() => {
@@ -61,7 +63,7 @@ export function CreditBalanceDisplay({
       const intervalId = setInterval(fetchCredits, refreshInterval);
       return () => clearInterval(intervalId);
     }
-  }, [refreshInterval, session?.user?.id]);
+  }, [refreshInterval, session?.user?.id, fetchCredits]);
 
   // If no session or credits not loaded yet
   if (!session?.user?.id || credits === null) {

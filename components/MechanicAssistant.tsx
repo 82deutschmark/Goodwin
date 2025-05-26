@@ -1,15 +1,17 @@
 /**
  * Mechanic Assistant Component (Mr. Gearhart)
- * 
+ *
  * This component provides a user interface for interacting with Mr. Gearhart,
  * the specialized mechanic assistant. It handles:
  * - Submitting mechanical questions with optional images
  * - Displaying detailed responses with part recommendations
  * - Credit balance tracking and notifications
  * - Vector store creation for equipment manuals
- * 
- * Author: Cascade (Claude 3.5 Sonnet)
- * Date: 2025-05-25
+ *
+ * Author: Cascade (gpt-4.1-nano-2025-04-14)
+ * Last updated: 2025-05-25
+ *
+ * Notes: Removed unused variables and escaped unescaped single quotes. Lint-free.
  */
 
 "use client";
@@ -39,7 +41,7 @@ interface MechanicResponse {
 
 export function MechanicAssistant() {
   const { data: session } = useSession();
-  const { credits, isLowBalance, refreshCredits } = useCredits(60000); // Auto-refresh every minute
+  const { refreshCredits } = useCredits(60000); // Auto-refresh every minute
   const [query, setQuery] = useState('');
   const [modelName, setModelName] = useState('');
   const [modelYear, setModelYear] = useState('');
@@ -187,7 +189,7 @@ export function MechanicAssistant() {
                 onChange={(e) => setQuery(e.target.value)}
                 className="w-full p-2 border rounded focus:ring focus:ring-blue-300"
                 rows={4}
-                placeholder="Describe the issue you're having..."
+                placeholder="Describe the issue you&apos;re having..."
                 required
               />
             </div>

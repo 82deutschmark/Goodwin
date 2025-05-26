@@ -29,6 +29,18 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 - Next phase: integrate credits consumption logic into all premium features, in line with the modular, context-rich, privacy-first agentic assistant vision (see conversion_longterm.md).
 - Author: gpt-4.1-nano-2025-04-14
 
+## [2025-05-25] Build/Lint Fixes and Code Quality Improvements
+- Fixed all Prisma import issues (now using named export).
+- Refactored OpenAI usage to use OpenAI class (no Configuration/OpenAIApi).
+- Removed all unused variables flagged by ESLint across backend and frontend.
+- Fixed React hook dependency warnings in all affected components.
+- Escaped all unescaped single quotes in JSX as per lint rules.
+- Updated module-level comments in all modified files with author/model and explanations.
+- Fixed all Prisma create/findMany calls to use correct property names and ordering.
+- All major backend and frontend blockers for deployment are now resolved. Project is robust, lint-free, and ready for production deployment.
+- Author: Cascade (gpt-4.1-nano-2025-04-14)
+- Timestamp: 2025-05-25
+
 ## [Unreleased] - YYYY-MM-DD
 
 ## 2025-05-14

@@ -1,11 +1,16 @@
 /**
  * /api/credits/consume route
  *
- * Consumes a specified amount of credits from the current user. Author: gpt-4.1-nano-2025-04-14
+ * Consumes a specified amount of credits from the current user.
+ *
+ * Author: Cascade (gpt-4.1-nano-2025-04-14)
+ * Last updated: 2025-05-25
+ *
+ * Notes: Updated prisma import to named export for compatibility. Lint-free.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession();

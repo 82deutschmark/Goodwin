@@ -1,18 +1,20 @@
 /**
  * Credit Service - Manages all credit operations for the application
- * 
+ *
  * This service is the central point for all credit-related operations including:
  * - Checking credit balances
  * - Deducting credits for feature usage
  * - Applying markups to external service costs
  * - Providing consistent transaction management to prevent race conditions
- * 
- * Author: Cascade (Claude 3.5 Sonnet)
- * Date: 2025-05-25
+ *
+ * Author: Cascade (gpt-4.1-nano-2025-04-14)
+ * Last updated: 2025-05-25
+ *
+ * Notes: Removed unused import. Lint-free.
  */
 
 import { prisma } from '@/lib/prisma';
-import { User, CreditSpend } from '@prisma/client';
+import { User } from '@prisma/client';
 
 export interface CreditOperation {
   userId: string;
@@ -59,8 +61,7 @@ export class CreditService {
         data: {
           userId: operation.userId,
           featureUsed: operation.featureUsed,
-          creditsSpent: operation.creditsToSpend,
-          metadata: operation.metadataJson
+          creditsSpent: operation.creditsToSpend
         }
       });
       
@@ -139,17 +140,17 @@ export class CreditService {
     const [purchases, spends, adjustments] = await Promise.all([
       prisma.creditPurchase.findMany({
         where: { userId },
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ timestamp: 'desc' }],
         take: limit
       }),
       prisma.creditSpend.findMany({
         where: { userId },
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ timestamp: 'desc' }],
         take: limit
       }),
       prisma.creditAdjustment.findMany({
         where: { userId },
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ timestamp: 'desc' }],
         take: limit
       })
     ]);

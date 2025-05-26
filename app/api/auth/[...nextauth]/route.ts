@@ -4,7 +4,11 @@
  * - Uses Google as the authentication provider.
  * - Uses Prisma Adapter for Postgres (Vercel Postgres) to persist users, sessions, and accounts.
  * - Session callback includes userId and credits for use in the frontend.
- * - Author: gpt-4.1-nano-2025-04-14
+ *
+ * Author: Cascade (gpt-4.1-nano-2025-04-14)
+ * Last updated: 2025-05-25
+ *
+ * Notes: Removed unused variables in signIn callback. Lint-free.
  */
 
 import NextAuth from "next-auth";
@@ -32,7 +36,7 @@ const handler = NextAuth({
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({ user }) {
       // Award 500 credits to new users upon their first Google OAuth login
       if (user && !user.credits) {
         await prisma.user.update({

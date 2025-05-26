@@ -1,23 +1,23 @@
 /**
  * Image Generation Service - Integration with Mr. Brightwell specialized assistant
- * 
+ *
  * This service handles image generation requests, coordinates with the MCP service
  * for proper credit tracking, and ensures all operations are properly recorded.
- * 
- * Author: Cascade (Claude 3.5 Sonnet)
- * Date: 2025-05-25
+ *
+ * Author: Cascade (gpt-4.1-nano-2025-04-14)
+ * Last updated: 2025-05-25
+ *
+ * Notes: Refactored to use OpenAI v4+ API (OpenAI class, no Configuration/OpenAIApi). Lint-free.
  */
 
-import { Configuration, OpenAIApi } from 'openai';
-import { mcpService } from './mcpService';
+import OpenAI from 'openai';
+import { mcpService, MCP_COSTS } from './mcpService';
 import { creditService } from './creditService';
 
 // Configure OpenAI API client
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-const openai = new OpenAIApi(configuration);
 
 export interface ImageGenerationOptions {
   prompt: string;
@@ -45,11 +45,11 @@ export class ImageGenerationService {
     const style = options.style || 'natural';
     
     // Calculate base cost based on options
-    let baseCost = mcpService.MCP_COSTS.IMAGE_GENERATION.BASE_COST;
+    let baseCost = MCP_COSTS.IMAGE_GENERATION.BASE_COST;
     
     // Adjust cost based on size and quality
     if (size === '1792x1024' || size === '1024x1792') {
-      baseCost = mcpService.MCP_COSTS.IMAGE_GENERATION.HIGH_RESOLUTION;
+      baseCost = MCP_COSTS.IMAGE_GENERATION.HIGH_RESOLUTION;
     }
     
     if (quality === 'hd') {
@@ -69,8 +69,8 @@ export class ImageGenerationService {
     }
     
     try {
-      // Generate images using OpenAI API
-      const response = await openai.createImage({
+      // Generate images using OpenAI API (OpenAI v4)
+      const response = await openai.images.generate({
         prompt: options.prompt,
         n: numberOfImages,
         size: size,
@@ -97,7 +97,7 @@ export class ImageGenerationService {
       const { credits, lowCredits } = await creditService.checkCreditBalance(userId);
       
       // Extract image URLs from the response
-      const images = response.data.data.map(item => {
+      const images = (response.data ?? []).map((item: { b64_json?: string; url?: string }) => {
         return options.responseFormat === 'b64_json' ? item.b64_json! : item.url!;
       });
       

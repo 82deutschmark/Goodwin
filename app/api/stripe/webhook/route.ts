@@ -9,8 +9,9 @@
  * - All DB ops via Prisma. Logs and returns 200 for handled events, 400 for signature errors, 500 for unhandled errors.
  * - Modular, secure, production-ready. No secrets in logs or responses.
  *
- * Author: gpt-4.1-nano-2025-04-14
+ * Author: Cascade (gpt-4.1-nano-2025-04-14)
  * Last updated: 2025-05-25
+ * Notes: Removed unused variables flagged by ESLint. Lint-free.
  *
  * Usage: Maintainers should review Stripe product/price IDs in .env and keep logic in sync with credit packages.
  */
@@ -103,7 +104,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           break;
         }
         // Award credits
-        const { credits, bonus, total } = CREDIT_PACKAGES[purchasedPriceId];
+        const { total } = CREDIT_PACKAGES[purchasedPriceId];
         await prisma.$transaction([
           prisma.creditPurchase.create({
             data: {
