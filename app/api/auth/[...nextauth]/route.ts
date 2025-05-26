@@ -13,9 +13,15 @@
  */
 
 import NextAuth, { type NextAuthOptions } from "next-auth";
+import type { AdapterUser as BaseAdapterUser } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
+
+// Extend the default AdapterUser type to include credits
+interface AdapterUser extends BaseAdapterUser {
+  credits: number;
+}
 
 // Import Prisma types
 type PrismaUser = {
@@ -55,18 +61,26 @@ const authOptions: NextAuthOptions = {
   adapter: {
     ...adapter,
     // Override the createUser method to include initial credits
-    async createUser(userData: { name?: string | null; email?: string | null; emailVerified?: Date | null; image?: string | null }) {
+    async createUser(userData: { name?: string | null; email?: string | null; emailVerified?: Date | null; image?: string | null }): Promise<AdapterUser> {
       // Create the user with initial credits
       const user = await prisma.user.create({
         data: {
-          name: userData.name ?? null,
-          email: userData.email ?? null,
-          emailVerified: userData.emailVerified ?? null,
-          image: userData.image ?? null,
+          name: userData.name || null,
+          email: userData.email || null,
+          emailVerified: userData.emailVerified || null,
+          image: userData.image || null,
           credits: 500, // Initial credits for new users
         },
       });
-      return user;
+      // Convert to AdapterUser type
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email || undefined,
+        emailVerified: user.emailVerified,
+        image: user.image || undefined,
+        credits: user.credits
+      } as AdapterUser;
     },
   },
   providers: [

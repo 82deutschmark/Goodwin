@@ -6,6 +6,14 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 -->
 # Changelog
 
+## [2025-05-26] Fixed Authentication Race Condition
+- Fixed race condition in NextAuth user creation that caused "record not found" errors
+- Improved user creation flow to set initial credits during user creation instead of in a separate update
+- Added proper TypeScript types for better type safety and error prevention
+- Updated dependencies to ensure compatibility (NextAuth, Prisma, TypeScript)
+- Author: Cascade (gpt-4.1-nano-2025-04-14)
+- Timestamp: 2025-05-26
+
 ## [2025-05-25] Fixed Prisma Build Error for Vercel Deployment
 - Pinned both `@prisma/client` and `prisma` to version 6.8.2 for full compatibility
 - Added troubleshooting advice to README for Prisma version mismatch errors
