@@ -15,6 +15,7 @@ User Experience: Victorian aristocrat - never worry about technical details, tel
 Credit System: "Gas tank" model - fill up and forget until low
 Service Quality: Mr. Goodwin is infallible; servants can be "hired/fired" (swapped)
 Memory: Everything remembered in vector store for increasingly personalized service
+
 3. The Household Staff
 Mr. Goodwin (Head Butler)
 
