@@ -9,6 +9,8 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 ## [2025-05-25] Fixed Prisma Build Error for Vercel Deployment
 - Fixed critical Prisma client initialization error in Vercel deployment by adding `prisma generate` to build process
 - Added `postinstall` script to ensure Prisma client is always generated after npm install
+- Refactored Prisma client initialization to address compatibility issues with Prisma v5.17.0/6.8.2
+- Updated Prisma client to prevent exhausting database connection limits in serverless environments
 - Updated documentation with proper Prisma deployment requirements
 - Updated project README with current features and deployment instructions
 - Author: Claude 3.5 Sonnet
