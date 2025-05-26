@@ -4,17 +4,40 @@
  * - Uses Google as the authentication provider.
  * - Uses Prisma Adapter for Postgres (Vercel Postgres) to persist users, sessions, and accounts.
  * - Session callback includes userId and credits for use in the frontend.
+ * - Fixed race condition in user creation and credit assignment.
  *
  * Author: Cascade (gpt-4.1-nano-2025-04-14)
- * Last updated: 2025-05-25
+ * Last updated: 2025-05-26
  *
  * Notes: Removed unused variables in signIn callback. Lint-free.
  */
 
-import NextAuth from "next-auth";
+import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
+
+// Import Prisma types
+type PrismaUser = {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  emailVerified?: Date | null;
+  image?: string | null;
+  credits: number;
+};
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      credits: number;
+      email?: string | null;
+      name?: string | null;
+      image?: string | null;
+    };
+  }
+}
 
 // Ensure your environment variables are defined
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
@@ -26,8 +49,26 @@ if (!googleClientId || !googleClientSecret) {
   );
 }
 
-const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
+const adapter = PrismaAdapter(prisma);
+
+const authOptions: NextAuthOptions = {
+  adapter: {
+    ...adapter,
+    // Override the createUser method to include initial credits
+    async createUser(userData: { name?: string | null; email?: string | null; emailVerified?: Date | null; image?: string | null }) {
+      // Create the user with initial credits
+      const user = await prisma.user.create({
+        data: {
+          name: userData.name ?? null,
+          email: userData.email ?? null,
+          emailVerified: userData.emailVerified ?? null,
+          image: userData.image ?? null,
+          credits: 500, // Initial credits for new users
+        },
+      });
+      return user;
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: googleClientId,
@@ -36,25 +77,17 @@ const handler = NextAuth({
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user }) {
-      // Award 500 credits to new users upon their first Google OAuth login
-      if (user && !user.credits) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { credits: 500 },
-        });
-      }
-      return true;
-    },
     async session({ session, user }) {
       // Attach userId and credits to the session for frontend use
-      if (session.user && user) {
+      if (session.user) {
         session.user.id = user.id;
-        session.user.credits = user.credits;
+        session.user.credits = (user as PrismaUser).credits || 0;
       }
       return session;
     },
   },
-});
+};
 
-export { handler as GET, handler as POST }; 
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
