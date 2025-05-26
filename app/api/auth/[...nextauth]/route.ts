@@ -62,25 +62,54 @@ const authOptions: NextAuthOptions = {
     ...adapter,
     // Override the createUser method to include initial credits
     async createUser(userData: { name?: string | null; email?: string | null; emailVerified?: Date | null; image?: string | null }): Promise<AdapterUser> {
-      // Create the user with initial credits
-      const user = await prisma.user.create({
-        data: {
-          name: userData.name || null,
-          email: userData.email || null,
-          emailVerified: userData.emailVerified || null,
-          image: userData.image || null,
-          credits: 500, // Initial credits for new users
-        },
-      });
-      // Convert to AdapterUser type
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email || undefined,
-        emailVerified: user.emailVerified,
-        image: user.image || undefined,
-        credits: user.credits
-      } as AdapterUser;
+      try {
+        console.log('[NextAuth][Adapter] Creating user with data:', JSON.stringify(userData));
+        
+        // Check if user with this email already exists
+        if (userData.email) {
+          const existingUser = await prisma.user.findUnique({
+            where: { email: userData.email },
+          });
+          
+          if (existingUser) {
+            console.log('[NextAuth][Adapter] User already exists with this email, returning existing user');
+            return {
+              id: existingUser.id,
+              name: existingUser.name,
+              email: existingUser.email || undefined,
+              emailVerified: existingUser.emailVerified,
+              image: existingUser.image || undefined,
+              credits: existingUser.credits
+            } as AdapterUser;
+          }
+        }
+        
+        // Create the user with initial credits
+        const user = await prisma.user.create({
+          data: {
+            name: userData.name || null,
+            email: userData.email || null,
+            emailVerified: userData.emailVerified || null,
+            image: userData.image || null,
+            credits: 500, // Initial credits for new users
+          },
+        });
+        
+        console.log('[NextAuth][Adapter] User created successfully with ID:', user.id);
+        
+        // Convert to AdapterUser type
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email || undefined,
+          emailVerified: user.emailVerified,
+          image: user.image || undefined,
+          credits: user.credits
+        } as AdapterUser;
+      } catch (error) {
+        console.error('[NextAuth][Adapter][ERROR] Failed to create user:', error);
+        throw error; // Re-throw to let NextAuth handle it
+      }
     },
   },
   debug: process.env.NODE_ENV === 'development',
