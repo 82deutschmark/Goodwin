@@ -93,11 +93,26 @@ const authOptions: NextAuthOptions = {
           prompt: 'select_account',
           access_type: 'offline',
           response_type: 'code',
+          // Use the appropriate redirect URI based on the request origin
+          // Both URIs must be added to Google Cloud Console OAuth settings
           redirect_uri: process.env.GOOGLE_REDIRECT_URI || 'https://gptpluspro.com/api/auth/callback/google'
         }
       }
     }),
   ],
+  // Allow requests from our known domains
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: true,
+        domain: process.env.NODE_ENV === 'production' ? '.gptpluspro.com' : undefined, // Subdomain-capable cookie in production
+      },
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async session({ session, user }) {
