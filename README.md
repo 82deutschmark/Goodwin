@@ -62,6 +62,18 @@ See `docs/changelog.md` for a detailed list of changes.
 
 ## Deployment Requirements
 
+### Prisma Version Troubleshooting (Vercel & Local)
+
+If you see errors mentioning `enableTracing` or `Failed to deserialize constructor options` during build or runtime, it means your Prisma CLI and client versions are mismatched. To fix:
+1. Ensure both `prisma` and `@prisma/client` are set to the exact same version in your `package.json` (this project uses `6.8.2`).
+2. Delete your lockfile (`package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`) and the `node_modules` directory.
+3. Run `npm install` (or `yarn install`/`pnpm install`).
+4. Run `npx prisma generate`.
+5. Commit the updated lockfile and deploy again.
+
+This will resolve all Prisma version mismatch errors on Vercel and locally.
+
+
 ### Prisma Database Setup
 
 This application uses Prisma with PostgreSQL for database management. For successful deployment (especially on Vercel), the following setup is required:

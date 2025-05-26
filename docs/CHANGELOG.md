@@ -7,6 +7,10 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 # Changelog
 
 ## [2025-05-25] Fixed Prisma Build Error for Vercel Deployment
+- Pinned both `@prisma/client` and `prisma` to version 6.8.2 for full compatibility
+- Added troubleshooting advice to README for Prisma version mismatch errors
+- If you see errors about `enableTracing` or `Failed to deserialize constructor options`, ensure both Prisma dependencies are exactly the same version and reinstall all dependencies
+
 - Fixed critical Prisma client initialization error in Vercel deployment by adding `prisma generate` to build process
 - Added `postinstall` script to ensure Prisma client is always generated after npm install
 - Refactored Prisma client initialization to address compatibility issues with Prisma v5.17.0/6.8.2
