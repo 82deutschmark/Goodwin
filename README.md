@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!--
 This README file provides an overview of the OpenAI Responses Starter App, its features, setup, and customization notes.
 It is intended to help users and contributors understand the project's purpose and how to work with it.
@@ -154,3 +155,7 @@ This project can be monetized using Google AdSense (which is how AdMob typically
 
 **4. AdSense Program Policies:**
    - Always adhere to Google's AdSense Program Policies to ensure your account remains in good standing.
+=======
+# Goodwin
+Centralized credit management system and backend services for OpenAI Responses Starter App. Handles all credit transactions, Stripe integration, and invisible user experience. See docs/credit_management_system_plan.md for architecture.
+>>>>>>> 911b5fecb91fc798e8dd2954ccae039a606d8aa9
