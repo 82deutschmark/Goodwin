@@ -41,7 +41,6 @@ FR‑2 Primary chat UI with Goodwin persona.
 FR‑3 Dynamic servant spin‑up via MCP negotiation when unseen intent detected.  
 FR‑4 VS memory write on every dialogue turn; cosine‑similar retrieval < 200 ms.  
 FR‑5 Notification Suppression: Private Secretary checks Apple Watch motion API; if moving, queue alerts.  
-FR‑6 Bill Pay MVP: Coachman triggers Stripe checkout links; logs receipts to VS.  
 FR‑7 Settings page: wipe/export memory; servant enable/disable toggles.  
 
 6  Non‑Functional Requirements  

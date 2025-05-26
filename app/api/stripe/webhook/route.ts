@@ -43,15 +43,6 @@ const CREDIT_PACKAGES: Record<string, { credits: number; bonus: number; total: n
   [process.env.STRIPE_PRICE_ID_140000!]: { credits: 100000, bonus: 40000, total: 140000, productId: process.env.STRIPE_PRODUCT_ID_140000!, priceId: process.env.STRIPE_PRICE_ID_140000!, amount: 10000 },
 };
 
-// Helper to get raw body as buffer
-async function getRawBody(readable: any) {
-  const chunks = [];
-  for await (const chunk of readable) {
-    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
-  }
-  return Buffer.concat(chunks);
-}
-
 export async function POST(request: Request) {
   // Get the raw body as text
   const body = await request.text();
