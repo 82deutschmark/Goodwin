@@ -249,7 +249,7 @@ Respond helpfully to the user's query in your role as Mr. Goodwin.
    * Store user interactions in vector store for context
    * This would be implemented with Ms. Bellamy's service
    */
-  private async storeInteraction(request: GoodwinRequest, response: string): Promise<void> {
+  private async storeInteraction(_request: GoodwinRequest, _response: string): Promise<void> {
     // Placeholder for vector store integration
     // In a full implementation, this would store the interaction in the appropriate vector store
     console.log('Storing interaction in vector store (placeholder)');

@@ -13,8 +13,7 @@
  * Date: 2025-05-25
  */
 'use client';
-import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BuyCreditsButton from '@/components/BuyCreditsButton';
 import CreditBalanceDisplay from '@/components/CreditBalanceDisplay';
@@ -91,16 +90,8 @@ const creditPackages: CreditPackage[] = [
 ];
 
 export default function BuyCreditsPage() {
-  // Use our custom hook for credits with 30-second auto-refresh
-  const { credits, isLoading, refreshCredits } = useCredits(30000);
+  const { credits } = useCredits();
   const [activeTab, setActiveTab] = useState("packages");
-  
-  // Auto-refresh credits when coming from checkout success page
-  useEffect(() => {
-    if (window.location.pathname === '/checkout/success') {
-      refreshCredits();
-    }
-  }, [refreshCredits]);
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">

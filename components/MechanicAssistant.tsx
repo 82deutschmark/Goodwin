@@ -343,7 +343,7 @@ export function MechanicAssistant() {
               <div className="text-6xl mb-4">🔧</div>
               <h2 className="text-xl font-semibold mb-2">Mr. Gearhart is Ready</h2>
               <p className="text-gray-600">
-                Ask me about any mechanical issue you're having with your equipment,
+                Ask me about any mechanical issue you&apos;re having with your equipment,
                 vehicles, or household appliances.
               </p>
             </div>

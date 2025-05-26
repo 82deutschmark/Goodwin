@@ -13,7 +13,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -40,7 +40,7 @@ export function CreditHistoryDisplay({
   const [error, setError] = useState<string | null>(null);
 
   // Function to fetch credit history
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     if (!session?.user?.id) return;
     
     setIsLoading(true);
@@ -60,7 +60,7 @@ export function CreditHistoryDisplay({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [session?.user?.id, limit]);
 
   // Fetch history on initial load
   useEffect(() => {

@@ -204,8 +204,9 @@ export class MechanicService {
    */
   private async searchVectorStore(vectorStoreId: string, query: string): Promise<any[]> {
     try {
-      // Implement vector store search logic here
+      // TODO: Implement vector store search logic
       // This is a placeholder for the actual implementation
+      console.log(`Searching vector store ${vectorStoreId} for: ${query}`);
       return [];
     } catch (error) {
       console.error('Error searching vector store:', error);

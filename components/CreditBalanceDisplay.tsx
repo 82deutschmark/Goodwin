@@ -12,7 +12,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 
 interface CreditBalanceDisplayProps {
@@ -32,7 +32,7 @@ export function CreditBalanceDisplay({
   const [isLoading, setIsLoading] = useState(false);
 
   // Function to fetch the latest credit balance
-  const fetchCredits = async () => {
+  const fetchCredits = useCallback(async () => {
     if (!session?.user?.id) return;
     
     setIsLoading(true);
@@ -48,7 +48,7 @@ export function CreditBalanceDisplay({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [session?.user?.id]);
 
   // Fetch credits on initial load
   useEffect(() => {
