@@ -249,10 +249,30 @@ Respond helpfully to the user's query in your role as Mr. Goodwin.
    * Store user interactions in vector store for context
    * This would be implemented with Ms. Bellamy's service
    */
-  private async storeInteraction(_request: GoodwinRequest, _response: string): Promise<void> {
-    // Placeholder for vector store integration
-    // In a full implementation, this would store the interaction in the appropriate vector store
-    console.log('Storing interaction in vector store (placeholder)');
+  private async storeInteraction(request: GoodwinRequest, response: string): Promise<void> {
+    try {
+      // In a full implementation, this would store the interaction in the appropriate vector store
+      // For now, we'll just log the interaction
+      console.log('Storing interaction:', {
+        userId: request.userId,
+        sessionId: request.sessionId,
+        query: request.query,
+        responseLength: response.length,
+        timestamp: new Date().toISOString()
+      });
+      
+      // TODO: Implement actual vector storage with Ms. Bellamy's service
+      // await bellamyService.storeInteraction({
+      //   userId: request.userId,
+      //   sessionId: request.sessionId,
+      //   query: request.query,
+      //   response,
+      //   timestamp: new Date()
+      // });
+    } catch (error) {
+      console.error('Error storing interaction:', error);
+      // Don't throw the error to avoid disrupting the main flow
+    }
   }
 }
 

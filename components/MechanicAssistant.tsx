@@ -306,7 +306,7 @@ export function MechanicAssistant() {
             </div>
           ) : response ? (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold">Mr. Gearhart's Response:</h2>
+              <h2 className="text-lg font-semibold">Mr. Gearhart&apos;s Response:</h2>
               <div className="prose max-w-none">
                 {response.response.split('\n').map((paragraph, index) => (
                   <p key={index}>{paragraph}</p>

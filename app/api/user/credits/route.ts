@@ -17,6 +17,19 @@ const authOptions = {
   providers: [],
   callbacks: {
     async session({ session, user }: { session: any; user: any }) {
+      if (session.user) {
+        // Extend the session type to include the user ID
+        type SessionWithUserId = typeof session & {
+          user: {
+            id: string;
+            name?: string | null;
+            email?: string | null;
+            image?: string | null;
+          };
+        };
+        
+        (session as SessionWithUserId).user.id = user.id;
+      }
       return session;
     },
   },

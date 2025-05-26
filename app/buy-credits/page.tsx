@@ -95,9 +95,19 @@ export default function BuyCreditsPage() {
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <h1 className="text-3xl font-bold">Credits</h1>
-        <CreditBalanceDisplay className="mt-2 md:mt-0" showLowCreditWarning={false} />
+      <div className="flex flex-col space-y-4 mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <h1 className="text-3xl font-bold">Credits</h1>
+          <CreditBalanceDisplay className="mt-2 md:mt-0" showLowCreditWarning={false} />
+        </div>
+        {credits !== null && (
+          <div className="bg-blue-50 p-4 rounded-md">
+            <p className="text-blue-800">
+              You currently have <span className="font-semibold">{credits} credits</span> available. 
+              Purchase more below to continue using premium features.
+            </p>
+          </div>
+        )}
       </div>
       
       <Tabs defaultValue="packages" value={activeTab} onValueChange={setActiveTab}>
