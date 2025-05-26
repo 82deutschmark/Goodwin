@@ -6,6 +6,14 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 -->
 # Changelog
 
+## [2025-05-25] Fixed Prisma Build Error for Vercel Deployment
+- Fixed critical Prisma client initialization error in Vercel deployment by adding `prisma generate` to build process
+- Added `postinstall` script to ensure Prisma client is always generated after npm install
+- Updated documentation with proper Prisma deployment requirements
+- Updated project README with current features and deployment instructions
+- Author: Claude 3.5 Sonnet
+- Timestamp: 2025-05-25
+
 ## [2025-05-25] Implemented Credit Management System
 - Created centralized credit service for all credit operations with proper transaction isolation
 - Implemented MCP server integration with 30% markup on all external service costs

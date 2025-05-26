@@ -4,9 +4,13 @@ It is intended to help users and contributors understand the project's purpose a
 Keep this file updated with any major changes to the project structure, features, or deployment strategy.
 -->
 
-# Responses starter app
-I, the user, cloned this from https://github.com/openai/openai-responses-starter-app.  It is deployed currently at https://gptpluspro.com for authenticated users and payments via Stripe. It is a credit-based system to use OpenAI's API.
-Eventually I hope to integrate the new abilities of the responses API to use MCP tools and make this app the basis of a full-featured AI assistant named "Mr. Goodwin".  Mr. Goodwin will be like a head butler from Edwardian times, but with the ability to delegate all your tasks to AI staff members in the form of MCPs.  Mr. Goodwin is at the forefront of the agentic AI assistant movement by democratizing aristocracy.  
+# OpenAI Responses Starter App with Credits System
+
+This application, originally cloned from https://github.com/openai/openai-responses-starter-app, has been extensively customized into a credit-based system for using OpenAI's API with Stripe integration for payments. It is deployed at https://gptpluspro.com for authenticated users.
+
+## Mr. Goodwin: An Agentic AI Butler Experience
+
+The core vision of this project is to create "Mr. Goodwin" - a head butler from Edwardian times who delegates tasks to specialized AI staff members via Model Context Protocol (MCP) tools. Mr. Goodwin represents the forefront of the agentic AI assistant movement by democratizing the aristocratic experience of having a household staff through AI.
 
 
 ![NextJS](https://img.shields.io/badge/Built_with-NextJS-blue)
@@ -56,7 +60,27 @@ This app now supports generating images using OpenAI's gpt-image-1 model. Users 
 
 See `docs/changelog.md` for a detailed list of changes.
 
-**Important Security Note for `next-auth`:**
+## Deployment Requirements
+
+### Prisma Database Setup
+
+This application uses Prisma with PostgreSQL for database management. For successful deployment (especially on Vercel), the following setup is required:
+
+1. **Environment Variables:**
+   - `DATABASE_URL`: Your PostgreSQL connection string
+   - For Vercel PostgreSQL: Use the `POSTGRES_PRISMA_URL` provided by Vercel
+
+2. **Build Configuration:**
+   - The project is configured to run `prisma generate` before building to prevent the common Prisma client initialization error on Vercel
+   - This is handled in the `build` script and the `postinstall` script in package.json
+
+3. **Local Development:**
+   - Run `npx prisma generate` after pulling changes that modify the database schema
+   - Use `npx prisma db push` to apply schema changes to your development database
+   - Optionally use `npx prisma studio` to view and edit your database content through a visual interface
+
+### NextAuth Security Configuration
+
 When using `next-auth` for authentication, it is **CRITICAL** to set a `NEXTAUTH_SECRET` environment variable in your production environment (e.g., Vercel environment variables) and also in your `.env` file for local development (especially if testing with HTTPS). This secret is used to sign cookies and tokens, ensuring the security of your user sessions.
 
 You can generate a strong secret using the following command in your terminal:
