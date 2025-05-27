@@ -6,6 +6,16 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 -->
 # Changelog
 
+## [2025-05-26] Domain Standardization and Authentication Improvements
+- Standardized on `www.gptpluspro.com` as the canonical domain
+- Added automatic redirects from non-www to www for consistent authentication
+- Updated NextAuth configuration to use the canonical domain for OAuth callbacks
+- Enhanced error handling and logging for OAuth flow
+- Fixed redirect_uri mismatch issues with Google OAuth
+- Updated environment variables to reflect the canonical domain
+- Author: Cascade (gpt-4.1-nano-2025-04-14)
+- Timestamp: 2025-05-26
+
 ## [2025-05-26] Fixed Authentication Race Condition
 - Fixed race condition in NextAuth user creation that caused "record not found" errors
 - Improved user creation flow to set initial credits during user creation instead of in a separate update
