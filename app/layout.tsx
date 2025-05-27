@@ -49,6 +49,7 @@ export default function RootLayout({
             <main>{children}</main>
             <Analytics />
           </div>
+          <Analytics />
         </body>
       </SessionProviderWrapper>
     </html>
