@@ -16,6 +16,9 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = ({ items, onSendMessage }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const itemsEndRef = useRef<HTMLDivElement>(null);
+  const [inputMessageText, setinputMessageText] = useState<string>("");
+  const [isComposing, setIsComposing] = useState(false);
 
   if (status === "unauthenticated") {
     router.push("/");
@@ -25,11 +28,6 @@ const Chat: React.FC<ChatProps> = ({ items, onSendMessage }) => {
   if (status === "loading") {
     return <div>Loading...</div>;
   }
-
-  const itemsEndRef = useRef<HTMLDivElement>(null);
-  const [inputMessageText, setinputMessageText] = useState<string>("");
-  // This state is used to provide better user experience for non-English IMEs such as Japanese
-  const [isComposing, setIsComposing] = useState(false);
 
   const scrollToBottom = () => {
     itemsEndRef.current?.scrollIntoView({ behavior: "instant" });

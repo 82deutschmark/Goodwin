@@ -54,7 +54,7 @@ export default async function RootLayout({
           <div className="flex h-screen bg-gray-200 w-full flex-col text-stone-900">
             <header className="bg-white shadow-sm py-4 px-6 flex justify-between items-center">
               <Link href="/" className="text-xl font-bold">
-                Mark's GPT-4.1
+                Mark&apos;s GPT-4.1
               </Link>
               <div className="flex items-center gap-4">
                 {session ? (

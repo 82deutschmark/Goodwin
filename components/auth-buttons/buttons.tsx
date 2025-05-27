@@ -5,13 +5,14 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export function SignInButton() {
   return (
     <Button asChild variant="default">
-      <a href="/api/auth/signin" className="flex items-center gap-2">
+      <Link href="/api/auth/signin" className="flex items-center gap-2">
         Sign In with Google
-      </a>
+      </Link>
     </Button>
   );
 }
@@ -19,9 +20,9 @@ export function SignInButton() {
 export function SignOutButton() {
   return (
     <Button asChild variant="outline">
-      <a href="/api/auth/signout">
+      <Link href="/api/auth/signout">
         Sign Out
-      </a>
+      </Link>
     </Button>
   );
 }
