@@ -1,11 +1,12 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "has": [
         { "type": "host", "value": "gptpluspro.com" }
       ],
-      "destination": "https://www.gptpluspro.com/:1",
+      "destination": "https://www.gptpluspro.com/:path*",
       "permanent": true
     }
   ]
