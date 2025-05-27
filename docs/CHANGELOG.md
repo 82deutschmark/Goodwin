@@ -24,6 +24,21 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 - Author: Cascade (gpt-4.1-nano-2025-04-14)
 - Timestamp: 2025-05-26
 
+## [2025-05-26] Authentication and Layout Improvements
+### Added
+- Session provider wrapper component for NextAuth
+- Dedicated auth buttons component with Sign In/Sign Out functionality
+- Credits display for authenticated users
+
+### Changed
+- Updated layout with proper header and navigation
+- Improved authentication flow visibility
+- Fixed author attribution to DeepSeek V3 (0324) across all files
+
+### Fixed
+- Module import resolution for auth components
+- TypeScript type declarations for auth buttons
+
 ## [2025-05-25] Fixed Prisma Build Error for Vercel Deployment
 - Pinned both `@prisma/client` and `prisma` to version 6.8.2 for full compatibility
 - Added troubleshooting advice to README for Prisma version mismatch errors

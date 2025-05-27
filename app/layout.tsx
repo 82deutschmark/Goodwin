@@ -8,6 +8,10 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 // import { SessionProvider } from "next-auth/react"; // No longer directly used here
 import SessionProviderWrapper from "./session-provider-wrapper"; // Import the new wrapper
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import Link from 'next/link';
+import { SignInButton, SignOutButton } from '@/components/auth-buttons'; // Update import path
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,11 +32,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+
   return (
     <html lang="en">
       <SessionProviderWrapper>
@@ -46,7 +52,26 @@ export default function RootLayout({
             strategy="afterInteractive"
           />
           <div className="flex h-screen bg-gray-200 w-full flex-col text-stone-900">
-            <main>{children}</main>
+            <header className="bg-white shadow-sm py-4 px-6 flex justify-between items-center">
+              <Link href="/" className="text-xl font-bold">
+                Mark's GPT-4.1
+              </Link>
+              <div className="flex items-center gap-4">
+                {session ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">
+                        Credits: {session.user.credits}
+                      </span>
+                      <SignOutButton />
+                    </div>
+                  </>
+                ) : (
+                  <SignInButton />
+                )}
+              </div>
+            </header>
+            <main className="flex-1 overflow-auto">{children}</main>
             <Analytics />
           </div>
           <Analytics />

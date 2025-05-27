@@ -57,7 +57,7 @@ if (!googleClientId || !googleClientSecret) {
 
 const adapter = PrismaAdapter(prisma);
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: {
     ...adapter,
     // Override the createUser method to include initial credits
