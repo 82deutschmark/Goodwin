@@ -13,6 +13,7 @@
 import React, { useState } from "react";
 // Use Next.js Image for optimal performance
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 /**
  * ImageGenerator component
@@ -24,6 +25,12 @@ import Image from "next/image";
  *
  * Author: Claude 3.7 Sonnet
  * Last updated: 2025-05-20
+ */
+/**
+ * Authentication: Only authenticated users can access image generation UI.
+ * Uses useSession from next-auth/react to check authentication status.
+ * Author/Model: Cascade (gpt-4.1-nano-2025-04-14)
+ * Last updated: 2025-05-27
  */
 export default function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
@@ -75,6 +82,18 @@ export default function ImageGenerator() {
     }
   }
 
+  const { status } = useSession();
+  if (status === "loading") {
+    return <div className="text-gray-500">Checking authentication...</div>;
+  }
+  if (status === "unauthenticated") {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 w-full h-full flex flex-col justify-center items-center border border-gray-100 dark:border-gray-800">
+        <h2 className="text-xl font-bold mb-6 text-blue-700 dark:text-blue-200 tracking-tight">Image Generator</h2>
+        <div className="text-red-500 text-center text-lg">Please sign in to use image generation.</div>
+      </div>
+    );
+  }
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 w-full h-full flex flex-col justify-start border border-gray-100 dark:border-gray-800">
       {/* Card-style container for Image Generator */}

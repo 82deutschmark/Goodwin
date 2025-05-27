@@ -200,6 +200,16 @@ When using `next-auth` for authentication, it is **CRITICAL** to set a `NEXTAUTH
 You can generate a strong secret using the following command in your terminal:
 ```bash
 openssl rand -hex 32
+
+---
+
+## Development Notes (2025-05-27)
+- Fixed build error by correcting the import path for `authOptions` in `app/layout.tsx` (should be imported from `@/app/api/auth/options`).
+- Added TypeScript module declarations for `react-syntax-highlighter` and its Prism styles to resolve missing type errors during build.
+- If you add new packages with missing type declarations, create a `.d.ts` file in the `types/` directory as shown for `react-syntax-highlighter`.
+- Always check the import paths for configuration objects to avoid module export errors in Next.js App Router projects.
+- Author: Cascade (gpt-4.1-nano-2025-04-14)
+- Timestamp: 2025-05-27
 ```
 Add this generated secret to your `.env` file like so:
 ```

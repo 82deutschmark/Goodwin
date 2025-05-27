@@ -6,6 +6,22 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 -->
 # Changelog
 
+## [2025-05-27] Image Generation UI Authentication Requirement
+- The image generation UI now requires authentication, matching the chat behavior.
+- Only authenticated users can access and use the image generation form; unauthenticated users see a sign-in prompt.
+- Improved consistency and security for premium features.
+- Author: Cascade (gpt-4.1-nano-2025-04-14)
+- Timestamp: 2025-05-27
+
+## [2025-05-27] Build Fixes, TypeScript Module Declarations, and Auth Import Correction
+- Fixed build error by correcting the import path for `authOptions` in `app/layout.tsx` (now imported from `@/app/api/auth/options`).
+- Added TypeScript module declarations for `react-syntax-highlighter` and its Prism styles to resolve missing type errors during build.
+- Confirmed clean build with no blocking errors or type issues.
+- No changes made to rate limiting or credits logic per user instruction.
+- Author: Cascade (gpt-4.1-nano-2025-04-14)
+- Timestamp: 2025-05-27
+
+
 ## [2025-05-26] Fixed Vercel Build Issues and Updated NextAuth Configuration
 - Fixed NextAuth route handler exports to be compatible with Next.js App Router
 - Updated NextAuth configuration to work with latest versions of Next.js and NextAuth
