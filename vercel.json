@@ -1,0 +1,12 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        { "type": "host", "value": "gptpluspro.com" }
+      ],
+      "destination": "https://www.gptpluspro.com/:1",
+      "permanent": true
+    }
+  ]
+}

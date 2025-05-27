@@ -122,14 +122,7 @@ const authOptions: NextAuthOptions = {
           prompt: 'select_account',
           access_type: 'offline',
           response_type: 'code',
-          // Dynamically determine the redirect_uri based on the NEXTAUTH_URL
-          // Log which redirect_uri is being used for debugging
-          redirect_uri: (() => {
-            const base = process.env.NEXTAUTH_URL?.replace(/\/$/, '') || 'https://gptpluspro.com';
-            const uri = `${base}/api/auth/callback/google`;
-            console.log('[NextAuth][Provider][Google] Using redirect_uri:', uri);
-            return uri;
-          })()
+          redirect_uri: 'https://www.gptpluspro.com/api/auth/callback/google'
         }
       }
     }),
