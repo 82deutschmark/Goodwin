@@ -6,6 +6,14 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 -->
 # Changelog
 
+## [2025-05-26] Fixed Vercel Build Issues and Updated NextAuth Configuration
+- Fixed NextAuth route handler exports to be compatible with Next.js App Router
+- Updated NextAuth configuration to work with latest versions of Next.js and NextAuth
+- Removed type errors that were causing build failures
+- Ensured proper TypeScript types for session and user objects
+- Author: Cascade (gpt-4.1-nano-2025-04-14)
+- Timestamp: 2025-05-26
+
 ## [2025-05-26] Domain Standardization and Authentication Improvements
 - Standardized on `www.gptpluspro.com` as the canonical domain
 - Added automatic redirects from non-www to www for consistent authentication

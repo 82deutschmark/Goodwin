@@ -6,7 +6,7 @@ import Message from "./message";
 import Annotations from "./annotations";
 import { Item } from "@/lib/assistant";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'; // Correct for App Router
 
 interface ChatProps {
   items: Item[];

@@ -6,33 +6,16 @@
  * - Session callback includes userId and credits for use in the frontend.
  * - Fixed race condition in user creation and credit assignment.
  *
- * Author: Cascade (gpt-4.1-nano-2025-04-14)
- * Last updated: 2025-05-26
- *
- * Notes: Removed unused variables in signIn callback. Lint-free.
+ * Updated for Next.js App Router and NextAuth v5
+ * Last updated: 2025-05-27
  */
 
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import type { AdapterUser as BaseAdapterUser } from "next-auth/adapters";
+import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 
-// Extend the default AdapterUser type to include credits
-interface AdapterUser extends BaseAdapterUser {
-  credits: number;
-}
-
-// Import Prisma types
-type PrismaUser = {
-  id: string;
-  name?: string | null;
-  email?: string | null;
-  emailVerified?: Date | null;
-  image?: string | null;
-  credits: number;
-};
-
+// Extend the default Session and User types to include our custom fields
 declare module "next-auth" {
   interface Session {
     user: {
@@ -43,7 +26,25 @@ declare module "next-auth" {
       image?: string | null;
     };
   }
+
+  interface User {
+    id: string;
+    credits: number;
+    email?: string | null;
+    name?: string | null;
+    image?: string | null;
+  }
 }
+
+// Type for the user data we expect from the database
+type DatabaseUser = {
+  id: string;
+  name: string | null;
+  email: string | null;
+  emailVerified: Date | null;
+  image: string | null;
+  credits: number;
+};
 
 // Ensure your environment variables are defined
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
@@ -57,11 +58,12 @@ if (!googleClientId || !googleClientSecret) {
 
 const adapter = PrismaAdapter(prisma);
 
-export const authOptions: NextAuthOptions = {
+// Configuration options for NextAuth
+const authOptions = {
   adapter: {
     ...adapter,
     // Override the createUser method to include initial credits
-    async createUser(userData: { name?: string | null; email?: string | null; emailVerified?: Date | null; image?: string | null }): Promise<AdapterUser> {
+    async createUser(userData: { name?: string | null; email?: string | null; emailVerified?: Date | null; image?: string | null }) {
       try {
         console.log('[NextAuth][Adapter] Creating user with data:', JSON.stringify(userData));
         
@@ -80,7 +82,7 @@ export const authOptions: NextAuthOptions = {
               emailVerified: existingUser.emailVerified,
               image: existingUser.image || undefined,
               credits: existingUser.credits
-            } as AdapterUser;
+            };
           }
         }
         
@@ -97,7 +99,7 @@ export const authOptions: NextAuthOptions = {
         
         console.log('[NextAuth][Adapter] User created successfully with ID:', user.id);
         
-        // Convert to AdapterUser type
+        // Return the user object
         return {
           id: user.id,
           name: user.name,
@@ -105,7 +107,7 @@ export const authOptions: NextAuthOptions = {
           emailVerified: user.emailVerified,
           image: user.image || undefined,
           credits: user.credits
-        } as AdapterUser;
+        };
       } catch (error) {
         console.error('[NextAuth][Adapter][ERROR] Failed to create user:', error);
         throw error; // Re-throw to let NextAuth handle it
@@ -142,11 +144,11 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async session({ session, user }) {
+    async session({ session, user }: { session: any, user: any }) {
       // Attach userId and credits to the session for frontend use
       if (session.user) {
         session.user.id = user.id;
-        session.user.credits = (user as PrismaUser).credits || 0;
+        session.user.credits = user.credits || 0;
       }
       return session;
     },
@@ -165,6 +167,8 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
+// Create the handler with the auth options
 const handler = NextAuth(authOptions);
 
+// Export the handler for GET and POST requests - this is required for Next.js App Router
 export { handler as GET, handler as POST };
