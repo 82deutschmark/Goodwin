@@ -9,7 +9,7 @@ import "./globals.css";
 // import { SessionProvider } from "next-auth/react"; // No longer directly used here
 import SessionProviderWrapper from "./session-provider-wrapper"; // Import the new wrapper
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/options';
 import Link from 'next/link';
 import { SignInButton, SignOutButton } from '@/components/auth-buttons'; // Update import path
 
