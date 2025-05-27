@@ -5,6 +5,8 @@ import ToolCall from "./tool-call";
 import Message from "./message";
 import Annotations from "./annotations";
 import { Item } from "@/lib/assistant";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface ChatProps {
   items: Item[];
@@ -12,6 +14,18 @@ interface ChatProps {
 }
 
 const Chat: React.FC<ChatProps> = ({ items, onSendMessage }) => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  if (status === "unauthenticated") {
+    router.push("/");
+    return null;
+  }
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
   const itemsEndRef = useRef<HTMLDivElement>(null);
   const [inputMessageText, setinputMessageText] = useState<string>("");
   // This state is used to provide better user experience for non-English IMEs such as Japanese
