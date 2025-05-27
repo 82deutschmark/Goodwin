@@ -14,11 +14,27 @@ interface ChatProps {
 }
 
 const Chat: React.FC<ChatProps> = ({ items, onSendMessage }) => {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const itemsEndRef = useRef<HTMLDivElement>(null);
-  const [inputMessageText, setinputMessageText] = useState<string>("");
+  const [inputMessageText, setInputMessageText] = useState<string>(""); // Renamed to setInputMessageText
   const [isComposing, setIsComposing] = useState(false);
+
+  const scrollToBottom = useCallback(() => {
+    itemsEndRef.current?.scrollIntoView({ behavior: "instant" });
+  }, [itemsEndRef]);
+
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey && !isComposing) {
+      event.preventDefault();
+      onSendMessage(inputMessageText);
+      setInputMessageText(""); // Updated reference
+    }
+  }, [onSendMessage, inputMessageText, isComposing]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [items, scrollToBottom]);
 
   if (status === "unauthenticated") {
     router.push("/");
@@ -28,22 +44,6 @@ const Chat: React.FC<ChatProps> = ({ items, onSendMessage }) => {
   if (status === "loading") {
     return <div>Loading...</div>;
   }
-
-  const scrollToBottom = () => {
-    itemsEndRef.current?.scrollIntoView({ behavior: "instant" });
-  };
-
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter" && !event.shiftKey && !isComposing) {
-      event.preventDefault();
-      onSendMessage(inputMessageText);
-      setinputMessageText("");
-    }
-  }, [onSendMessage, inputMessageText, isComposing]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [items]);
 
   return (
     <div className="flex justify-center items-center size-full">
@@ -85,7 +85,7 @@ const Chat: React.FC<ChatProps> = ({ items, onSendMessage }) => {
                       placeholder="Message..."
                       className="mb-2 resize-none border-0 focus:outline-none text-sm bg-transparent px-0 pb-6 pt-2"
                       value={inputMessageText}
-                      onChange={(e) => setinputMessageText(e.target.value)}
+                      onChange={(e) => setInputMessageText(e.target.value)} // Updated reference
                       onKeyDown={handleKeyDown}
                       onCompositionStart={() => setIsComposing(true)}
                       onCompositionEnd={() => setIsComposing(false)}
@@ -97,7 +97,7 @@ const Chat: React.FC<ChatProps> = ({ items, onSendMessage }) => {
                     className="flex size-8 items-end justify-center rounded-full bg-black text-white transition-colors hover:opacity-70 focus-visible:outline-none focus-visible:outline-black disabled:bg-[#D7D7D7] disabled:text-[#f4f4f4] disabled:hover:opacity-100"
                     onClick={() => {
                       onSendMessage(inputMessageText);
-                      setinputMessageText("");
+                      setInputMessageText(""); // Updated reference
                     }}
                   >
                     <svg
