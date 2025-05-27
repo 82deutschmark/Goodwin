@@ -75,9 +75,9 @@ const authOptions: AuthOptions = {
             return {
               id: existingUser.id,
               name: existingUser.name,
-              email: existingUser.email || undefined,
+              email: existingUser.email || "", // Ensure email is string not undefined
               emailVerified: existingUser.emailVerified,
-              image: existingUser.image || undefined,
+              image: existingUser.image || null,
               credits: existingUser.credits
             };
           }
@@ -100,9 +100,9 @@ const authOptions: AuthOptions = {
         return {
           id: user.id,
           name: user.name,
-          email: user.email || undefined,
+          email: user.email || "", // Ensure email is string not undefined
           emailVerified: user.emailVerified,
-          image: user.image || undefined,
+          image: user.image || null,
           credits: user.credits
         };
       } catch (error) {
@@ -168,4 +168,4 @@ const authOptions: AuthOptions = {
 const handler = NextAuth(authOptions);
 
 // Export the handler for GET and POST requests - this is required for Next.js App Router
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST, authOptions };

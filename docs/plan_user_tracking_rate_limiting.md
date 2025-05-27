@@ -40,26 +40,7 @@ Since we're deploying on Vercel, we'll use Vercel's integrated services and comp
 5. `middleware.ts` - Enhance middleware for rate limiting
 6. `.env` - Add new environment variables
 
-## Database Options
-
-### Option 1: Vercel Postgres
-- Built-in Vercel integration
-- SQL database with robust query capabilities
-- Good for complex relationships and transactions
-
-**Recommended Choice**: Vercel Postgres for structured data with KV for rate limiting
-
-## Detailed Implementation Steps
-
-### 1. Database Setup
-
-1. Set up Vercel Postgres or chosen database service
-2. Create schema for:
-   - Users table (linked to OAuth IDs)
-   - Credits table
-   - Usage history table
-
-### 2. Enhanced Authentication
+## Database CHECK THE PROJECT AND UPDATE!!  I think it is Prisma?  It is via Vercel I think??
 
 1. Update NextAuth callbacks to:
    - Store user profile data in database

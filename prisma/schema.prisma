@@ -1,32 +1,24 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL") // Uses Vercel's POSTGRES_PRISMA_URL
-  relationMode = "prisma"
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
 
-  // Custom fields for credits
-  credits         Int             @default(0)
-  creditPurchases CreditPurchase[]
-  creditSpends    CreditSpend[]
+model User {
+  id                String             @id @default(cuid())
+  name              String?
+  email             String?            @unique
+  emailVerified     DateTime?
+  image             String?
+  credits           Int                @default(0)
+  accounts          Account[]
+  sessions          Session[]
+  creditPurchases   CreditPurchase[]
+  creditSpends      CreditSpend[]
   creditAdjustments CreditAdjustment[]
 }
 
@@ -43,8 +35,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -65,33 +56,32 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Models for Credit System
 model CreditPurchase {
-  id                    String      @id @default(cuid())
+  id                    String   @id @default(cuid())
   userId                String
-  user                  User        @relation(fields: [userId], references: [id])
-  stripePaymentIntentId String      @unique // For idempotency
+  stripePaymentIntentId String   @unique
   creditsPurchased      Int
-  amountPaid            Int         // In cents
-  currency              String      // e.g., "usd"
-  timestamp             DateTime    @default(now())
+  amountPaid            Int
+  currency              String
+  timestamp             DateTime @default(now())
+  user                  User     @relation(fields: [userId], references: [id])
 }
 
 model CreditSpend {
   id           String   @id @default(cuid())
   userId       String
-  user         User     @relation(fields: [userId], references: [id])
-  featureUsed  String   // e.g., "imageGeneration", "textGeneration"
+  featureUsed  String
   creditsSpent Int
   timestamp    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
 }
 
 model CreditAdjustment {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id])
-  amount       Int      // Can be positive (add) or negative (deduct)
-  reason       String   // e.g., "Refund for order X", "Promotional credits"
-  adminUserId  String?  // ID of admin who made the adjustment, if applicable
-  timestamp    DateTime @default(now())
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Int
+  reason      String
+  adminUserId String?
+  timestamp   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
 }
