@@ -10,21 +10,18 @@
  * Last updated: 2025-05-27
  */
 
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions, DefaultSession, User as NextAuthUser } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 
 // Extend the default Session and User types to include our custom fields
 declare module "next-auth" {
-  interface Session {
+  interface Session extends DefaultSession {
     user: {
       id: string;
       credits: number;
-      email?: string | null;
-      name?: string | null;
-      image?: string | null;
-    };
+    } & DefaultSession["user"];
   }
 
   interface User {
@@ -59,7 +56,7 @@ if (!googleClientId || !googleClientSecret) {
 const adapter = PrismaAdapter(prisma);
 
 // Configuration options for NextAuth
-const authOptions = {
+const authOptions: AuthOptions = {
   adapter: {
     ...adapter,
     // Override the createUser method to include initial credits
@@ -144,11 +141,11 @@ const authOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async session({ session, user }: { session: any, user: any }) {
+    async session({ session, user }) {
       // Attach userId and credits to the session for frontend use
       if (session.user) {
         session.user.id = user.id;
-        session.user.credits = user.credits || 0;
+        session.user.credits = (user as any).credits || 0;
       }
       return session;
     },
