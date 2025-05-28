@@ -119,7 +119,7 @@ export const authOptions: AuthOptions = {
           prompt: 'select_account',
           access_type: 'offline',
           response_type: 'code',
-          redirect_uri: 'https://www.gptpluspro.com/api/auth/callback/google'
+          redirect_uri: 'https://gptpluspro.com/api/auth/callback/google'
         }
       }
     }),
