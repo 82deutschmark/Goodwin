@@ -6,6 +6,25 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 -->
 # Changelog
 
+## [2025-01-27] Chat Functionality Fix - OpenAI API Integration
+### Fixed
+- **CRITICAL FIX**: Replaced experimental OpenAI Responses API with standard Chat Completions API in `/app/api/turn_response/route.ts`
+- Chat messages now properly send to OpenAI and receive responses (was failing silently before)
+- Comprehensive event format conversion to maintain compatibility with frontend event handlers
+- Tool call streaming and argument processing now works correctly
+- Function call events (`response.function_call_arguments.delta`, `response.function_call_arguments.done`) properly mapped from Chat Completions stream
+
+### Changed
+- Chat API now uses `openai.chat.completions.create()` instead of `openai.responses.create()` for better compatibility
+- Message format conversion from Responses API format to Chat Completions format
+- Enhanced error handling and debugging for chat endpoint
+
+### Technical Details
+- Author: Cascade (Claude 3.5 Sonnet)
+- The Responses API was experimental and may not be available to all OpenAI users
+- This fix ensures chat works with standard OpenAI API access levels
+- Maintains backward compatibility with existing frontend event handling
+
 ## [2025-07-15] OAuth Debugging Enhancements and OAuthCallback Error Troubleshooting
 ### Added
 - Enhanced NextAuth configuration with comprehensive error logging and debugging
