@@ -10,6 +10,8 @@
 
 import NextAuth from "next-auth";
 import { authOptions } from "../options";
+// For debugging OAuthCallback errors, temporarily use:
+// import { authOptionsSimple as authOptions } from "../options-simple";
 
 // Create the handler with the auth options imported from options.ts
 const handler = NextAuth(authOptions);

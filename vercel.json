@@ -4,9 +4,9 @@
     {
       "source": "/:path*",
       "has": [
-        { "type": "host", "value": "gptpluspro.com" }
+        { "type": "host", "value": "www.gptpluspro.com" }
       ],
-      "destination": "https://www.gptpluspro.com/:path*",
+      "destination": "https://gptpluspro.com/:path*",
       "permanent": true
     }
   ]

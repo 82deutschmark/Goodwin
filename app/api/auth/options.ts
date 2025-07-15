@@ -62,54 +62,73 @@ export const authOptions: AuthOptions = {
       try {
         console.log('[NextAuth][Adapter] Creating user with data:', JSON.stringify(userData));
         
+        // Validate email exists
+        if (!userData.email) {
+          console.error('[NextAuth][Adapter][ERROR] No email provided in userData');
+          throw new Error('Email is required for user creation');
+        }
+        
+        // Test database connection first
+        try {
+          await prisma.$connect();
+          console.log('[NextAuth][Adapter] Database connection successful');
+        } catch (dbError) {
+          console.error('[NextAuth][Adapter][ERROR] Database connection failed:', dbError);
+          throw new Error('Database connection failed');
+        }
+        
         // Check if user with this email already exists
-        if (userData.email) {
-          const existingUser = await prisma.user.findUnique({
-            where: { email: userData.email },
-          });
-          
-          if (existingUser) {
-            console.log('[NextAuth][Adapter] User already exists with this email, returning existing user');
-            return {
-              id: existingUser.id,
-              name: existingUser.name,
-              email: existingUser.email || "", // Ensure email is string not undefined
-              emailVerified: existingUser.emailVerified,
-              image: existingUser.image || null,
-              credits: existingUser.credits
-            };
-          }
+        const existingUser = await prisma.user.findUnique({
+          where: { email: userData.email },
+        });
+        
+        if (existingUser) {
+          console.log('[NextAuth][Adapter] User already exists with this email, returning existing user');
+          return {
+            id: existingUser.id,
+            name: existingUser.name,
+            email: existingUser.email || userData.email, // Ensure email is always set
+            emailVerified: existingUser.emailVerified,
+            image: existingUser.image,
+            credits: existingUser.credits
+          } as any; // Type assertion to match AdapterUser interface
         }
         
         // Create the user with initial credits
+        console.log('[NextAuth][Adapter] Creating new user...');
         const user = await prisma.user.create({
           data: {
-            name: userData.name || null,
-            email: userData.email || null,
-            emailVerified: userData.emailVerified || null,
-            image: userData.image || null,
+            name: userData.name,
+            email: userData.email,
+            emailVerified: userData.emailVerified,
+            image: userData.image,
             credits: 500, // Initial credits for new users
           },
         });
         
         console.log('[NextAuth][Adapter] User created successfully with ID:', user.id);
         
-        // Return the user object
+        // Return the user object in the format NextAuth expects
         return {
           id: user.id,
           name: user.name,
-          email: user.email || "", // Ensure email is string not undefined
+          email: user.email!, // Use non-null assertion since we validated email exists
           emailVerified: user.emailVerified,
-          image: user.image || null,
+          image: user.image,
           credits: user.credits
-        };
+        } as any; // Type assertion to match AdapterUser interface
       } catch (error) {
         console.error('[NextAuth][Adapter][ERROR] Failed to create user:', error);
+        console.error('[NextAuth][Adapter][ERROR] Error details:', {
+          message: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined,
+          userData: JSON.stringify(userData)
+        });
         throw error; // Re-throw to let NextAuth handle it
       }
     },
   },
-  debug: process.env.NODE_ENV === 'development',
+  debug: true, // Enable debug logs in production temporarily
   providers: [
     GoogleProvider({
       clientId: googleClientId,
@@ -118,8 +137,8 @@ export const authOptions: AuthOptions = {
         params: {
           prompt: 'select_account',
           access_type: 'offline',
-          response_type: 'code',
-          redirect_uri: 'https://gptpluspro.com/api/auth/callback/google'
+          response_type: 'code'
+          // Removed hardcoded redirect_uri - NextAuth handles this automatically
         }
       }
     }),
@@ -132,22 +151,13 @@ export const authOptions: AuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: true,
-        domain: process.env.NODE_ENV === 'production' ? '.gptpluspro.com' : undefined, // Subdomain-capable cookie in production
+        secure: process.env.NODE_ENV === 'production',
+        // Use specific domain for production, undefined for development
+        domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN || undefined : undefined,
       },
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  callbacks: {
-    async session({ session, user }) {
-      // Attach userId and credits to the session for frontend use
-      if (session.user) {
-        session.user.id = user.id;
-        session.user.credits = (user as any).credits || 0;
-      }
-      return session;
-    },
-  },
   // Server-side event logging for OAuth debugging
   events: {
     // Logs sign-in attempts for debugging
@@ -157,6 +167,33 @@ export const authOptions: AuthOptions = {
     // Logs user creation for debugging
     async createUser(message: any) {
       console.log('[NextAuth][Event][createUser]', message);
+    },
+    // Log session creation
+    async session(message: any) {
+      console.log('[NextAuth][Event][session]', message);
+    },
+    // Log successful sign-ins
+    async linkAccount(message: any) {
+      console.log('[NextAuth][Event][linkAccount]', message);
+    },
+  },
+  // Add callbacks for better error tracking
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      console.log('[NextAuth][Callback][signIn] User:', JSON.stringify(user));
+      console.log('[NextAuth][Callback][signIn] Account:', JSON.stringify(account));
+      console.log('[NextAuth][Callback][signIn] Profile:', JSON.stringify(profile));
+      return true; // Allow sign in
+    },
+    async session({ session, user }) {
+      console.log('[NextAuth][Callback][session] Called with user:', JSON.stringify(user));
+      // Attach userId and credits to the session for frontend use
+      if (session.user) {
+        session.user.id = user.id;
+        session.user.credits = (user as any).credits || 0;
+      }
+      console.log('[NextAuth][Callback][session] Returning session:', JSON.stringify(session));
+      return session;
     },
   },
 };

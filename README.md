@@ -1,13 +1,13 @@
 
 # Mr. Goodwin: An Agentic AI Butler Experience
 
-This application, originally cloned from https://github.com/openai/openai-responses-starter-app, has been extensively customized into a credit-based system for using OpenAI's API with Stripe integration for payments. It is deployed at https://www.gptpluspro.com for authenticated users.
+This application, originally cloned from https://github.com/openai/openai-responses-starter-app, has been extensively customized into a credit-based system for using OpenAI's API with Stripe integration for payments. It is deployed at https://gptpluspro.com for authenticated users.
 
 ## Authentication
 - **Google OAuth 2.0** for secure sign-in
 - **Credit-based access** to premium features
 - **Secure session management** with NextAuth.js
-- **Canonical domain**: All traffic is automatically redirected to `https://www.gptpluspro.com` for consistent authentication
+- **Canonical domain**: All traffic is automatically redirected to `https://gptpluspro.com` for consistent authentication
 
 ## Mr. Goodwin: An Agentic AI Butler Experience
 

@@ -6,6 +6,31 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 -->
 # Changelog
 
+## [2025-07-15] OAuth Debugging Enhancements and OAuthCallback Error Troubleshooting
+### Added
+- Enhanced NextAuth configuration with comprehensive error logging and debugging
+- New diagnostic API route `/api/auth/debug` for troubleshooting OAuth and database connectivity issues
+- Simplified authentication configuration (`options-simple.ts`) for isolating complex adapter issues
+- Database connection validation in custom user creation flow
+- Detailed error logging for OAuth callback failures
+
+### Changed
+- Improved error handling in custom `createUser` adapter method with better validation
+- Enhanced debug logging for all NextAuth events and callbacks
+- Fixed type compatibility issues with AdapterUser interface
+- Temporarily enabled debug mode in production for troubleshooting
+- **Updated canonical domain to `gptpluspro.com` (non-www) with proper redirects**
+
+### Fixed
+- Removed hardcoded redirect URI that could cause OAuth callback mismatches
+- Improved email handling to ensure non-null values for NextAuth compatibility
+- Added proper error boundaries and stack trace logging for adapter failures
+- **Updated Vercel redirect configuration to redirect www to non-www**
+
+**Note:** Remember to disable debug mode and remove the debug route in production after troubleshooting
+- Author: Claude (gpt-4.1-nano-2025-04-14)
+- Timestamp: 2025-07-15
+
 ## [2025-05-27] Image Generation UI Authentication Requirement
 - The image generation UI now requires authentication, matching the chat behavior.
 - Only authenticated users can access and use the image generation form; unauthenticated users see a sign-in prompt.
@@ -31,8 +56,8 @@ Use the following sections as needed: Added, Changed, Fixed, Removed, Deprecated
 - Timestamp: 2025-05-26
 
 ## [2025-05-26] Domain Standardization and Authentication Improvements
-- Standardized on `www.gptpluspro.com` as the canonical domain
-- Added automatic redirects from non-www to www for consistent authentication
+- Standardized on `gptpluspro.com` (non-www) as the canonical domain
+- Added automatic redirects from www to non-www for consistent authentication
 - Updated NextAuth configuration to use the canonical domain for OAuth callbacks
 - Enhanced error handling and logging for OAuth flow
 - Fixed redirect_uri mismatch issues with Google OAuth
