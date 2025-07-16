@@ -29,17 +29,33 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   
+  // Debug: Log cookies and environment
+  console.log("[Middleware] Checking auth for:", pathname);
+  console.log("[Middleware] Cookies:", request.headers.get("cookie"));
+  console.log("[Middleware] NEXTAUTH_SECRET length:", process.env.NEXTAUTH_SECRET?.length || 0);
+  console.log("[Middleware] NODE_ENV:", process.env.NODE_ENV);
+  
   // Check authentication for protected routes
-  const token = await getToken({ req: request as any });
+  const token = await getToken({ 
+    req: request as any,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+  
+  console.log("[Middleware] Token result:", token ? "✅ Valid" : "❌ Invalid/Missing");
+  if (token) {
+    console.log("[Middleware] Token details:", JSON.stringify(token, null, 2));
+  }
   
   // If user is not authenticated and tries to access protected route
   if (!token) {
+    console.log("[Middleware] Redirecting to sign-in");
     // Redirect to login page with callback URL
     const url = new URL("/api/auth/signin", request.url);
     url.searchParams.append("callbackUrl", encodeURI(request.url));
     return NextResponse.redirect(url);
   }
   
+  console.log("[Middleware] Authentication successful, allowing access");
   // If authenticated, allow access to protected routes
   return NextResponse.next();
 }
