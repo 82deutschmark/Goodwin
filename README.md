@@ -195,13 +195,59 @@ This application uses Prisma with PostgreSQL for database management. For succes
 
 ### NextAuth Security Configuration
 
-When using `next-auth` for authentication, it is **CRITICAL** to set a `NEXTAUTH_SECRET` environment variable in your production environment (e.g., Vercel environment variables) and also in your `.env` file for local development (especially if testing with HTTPS). This secret is used to sign cookies and tokens, ensuring the security of your user sessions.
+When using `next-auth` for authentication, it is **CRITICAL** to set a proper `NEXTAUTH_SECRET` environment variable. This secret is used to sign and verify JWT tokens, ensuring the security of your user sessions.
 
-You can generate a strong secret using the following command in your terminal:
+#### 🚨 Critical Requirements
+
+**The secret MUST be at least 32 bytes (64 hex characters) long** for secure JWT token validation.
+
+#### ✅ Generate a Secure Secret
+
+Use this command to generate a cryptographically secure secret:
 ```bash
 openssl rand -hex 32
+```
 
----
+This generates 32 **bytes** of random data encoded as 64 **hex characters** - exactly what NextAuth needs.
+
+#### 📝 Environment Variable Setup
+
+1. **For Local Development (.env file):**
+```bash
+NEXTAUTH_SECRET=your_64_character_secret_generated_above
+```
+
+2. **For Production (Vercel Environment Variables):**
+   - Go to your Vercel project settings
+   - Add `NEXTAUTH_SECRET` with the same 64-character value
+   - Redeploy your application
+
+#### 🔍 Troubleshooting Authentication Issues
+
+**Symptoms of incorrect NEXTAUTH_SECRET:**
+- ✅ Login works (cookies are set)
+- ❌ Immediately redirected to sign-in on protected pages
+- ❌ Session validation fails in middleware
+- ❌ "Unauthorized" errors despite being logged in
+
+**Common mistakes:**
+- Using a short password instead of the generated secret
+- Different secrets between local and production environments
+- Missing the environment variable entirely
+
+**Debug steps:**
+1. Verify secret length: Should be exactly 64 characters
+2. Check both local `.env` and production environment variables match
+3. Redeploy after changing environment variables
+4. Clear browser cookies and sign in again
+
+#### 🛡️ Security Impact
+
+A proper NEXTAUTH_SECRET is essential for:
+- Preventing JWT token forgery attacks
+- Ensuring session integrity across requests
+- Protecting user authentication state
+- Meeting security best practices for production apps
 
 ## Development Notes (2025-05-27)
 - Fixed build error by correcting the import path for `authOptions` in `app/layout.tsx` (should be imported from `@/app/api/auth/options`).
@@ -210,10 +256,10 @@ openssl rand -hex 32
 - Always check the import paths for configuration objects to avoid module export errors in Next.js App Router projects.
 - Author: Cascade (gpt-4.1-nano-2025-04-14)
 - Timestamp: 2025-05-27
-```
-Add this generated secret to your `.env` file like so:
-```
-NEXTAUTH_SECRET=your_generated_secret_here
-```
-And ensure it is also set in your Vercel deployment environment variables.
+
+## Recent Critical Fixes (2025-01-27)
+- **Chat Functionality**: Fixed OpenAI API integration by switching from experimental Responses API to standard Chat Completions API
+- **Authentication Security**: Resolved NEXTAUTH_SECRET length issues preventing proper session validation
+- **Author**: Cascade (Claude 3.5 Sonnet)
+- **Impact**: Critical fixes for core functionality and security
 
