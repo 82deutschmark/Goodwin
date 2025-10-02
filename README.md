@@ -9,11 +9,11 @@ This application, originally cloned from https://github.com/openai/openai-respon
 - **Secure session management** with NextAuth.js
 - **Canonical domain**: All traffic is automatically redirected to `https://gptpluspro.com` for consistent authentication
 
-## Mr. Goodwin: An Agentic AI Butler Experience
+## Mr. Goodwin: An Agentic AI Business Manager Experience
 
 The core vision of this project is to create "Mr. Goodwin" - a head butler from Edwardian times who delegates tasks to specialized AI staff members via Model Context Protocol (MCP) tools. Mr. Goodwin represents the forefront of the agentic AI assistant movement by democratizing the aristocratic experience of having a household staff through AI.
 
-PRD — Mr. Goodwin: Edwardian era servant hierarchy adapted for AI
+PRD — Mr. Goodwin: Edwardian era servant hierarchy adapted for AI and making business plans
 1. Objective
 Create a personal AI butler service that abstracts away AI complexity through a Victorian household staff metaphor. Users interact only with Mr. Goodwin, the head butler, who orchestrates specialized AI servants to handle all requests.
 2. Core Philosophy
