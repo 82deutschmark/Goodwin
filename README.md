@@ -1,5 +1,19 @@
 
-# Mr. Goodwin: An Agentic AI Butler Experience
+# Mr. Goodwin: An Agentic AI Business Manager 
+New goals for October 2025:
+
+This document will need an extensive rewrite and reference Anthropic’s Project Vend: involved giving its Claude AI model control of a real automated shop inside its office. The AI, named Claudius, had to handle inventory, set prices, process customer feedback, and manage deliveries. While simulations showed promise, real-world execution was flawed, revealing the gap between theoretical AI capabilities and practical autonomy
+https://www.anthropic.com/research/project-vend-1
+
+I want to use the new advancing capabilities of tools like Notion https://www.notion.so/ and https://www.pulsemcp.com/servers to create a business manager that can manage a business for the human owner, much like a manager would manage an aristocrat's business, delegating tasks to specialized AI staff agents who are equipped with tools and access to Model Context Protocol (MCP) tools, and only demanding action from the human owner when necessary, but keeping the human owner as informed as the owner wishes to be made of the progress of their business.  This manager is Mr. GoodWin. He spawns the agents in .agents\luigi to create the business plan, then he uses the Notion API abilities to pull all the replies into a workspace and he assembles the business plan. He then uses the tools and agents to do everything from advertising to customer service to inventory management to marketing to sales.  He only delegates tasks to the human owner when necessary, such as when the business needs to be registered in a physical location, or if physical interaction in the corporeal realm is required. 
+
+The end result is we want a small local business like vending, or stump grinding, or snow plowing.  GoodWin has done all of the paperwork to register the business and instructs the human owner what to do and where to go.  
+
+
+
+
+The previous app was:  
+
 
 This application, originally cloned from https://github.com/openai/openai-responses-starter-app, has been extensively customized into a credit-based system for using OpenAI's API with Stripe integration for payments. It is deployed at https://gptpluspro.com for authenticated users.
 
@@ -11,9 +25,9 @@ This application, originally cloned from https://github.com/openai/openai-respon
 
 ## Mr. Goodwin: An Agentic AI Business Manager Experience
 
-The core vision of this project is to create "Mr. Goodwin" - a head butler from Edwardian times who delegates tasks to specialized AI staff members via Model Context Protocol (MCP) tools. Mr. Goodwin represents the forefront of the agentic AI assistant movement by democratizing the aristocratic experience of having a household staff through AI.
+The core vision of this project is to create "Mr. Goodwin" - a head servant / business manager from Edwardian times who delegates tasks to specialized AI staff members via Model Context Protocol (MCP) tools. Mr. Goodwin represents the forefront of the agentic AI assistant movement by democratizing the aristocratic experience of having a household staff through AI.
 
-PRD — Mr. Goodwin: Edwardian era servant hierarchy adapted for AI and making business plans
+PRD — Mr. Goodwin: Edwardian era class hierarchy adapted for AI and making business plans
 1. Objective
 Create a personal AI butler service that abstracts away AI complexity through a Victorian household staff metaphor. Users interact only with Mr. Goodwin, the head butler, who orchestrates specialized AI servants to handle all requests.
 2. Core Philosophy
